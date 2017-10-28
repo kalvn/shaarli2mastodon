@@ -2,7 +2,13 @@
 
 This plugin allows you to automatically publish links you post on your Mastodon timeline.
 
-It is largely inspired by [ArthurHoaro's shaarli2twitter](https://github.com/ArthurHoaro/shaarli2twitter).
+It is largely inspired by [ArthurHoaro's shaarli2twitter](https://github.com/ArthurHoaro/shaarli2twitter) and uses an adapted version of [TootoPHP](https://framagit.org/MaxKoder/TootoPHP).
+
+## Requirements
+
+- PHP 5.3
+- PHP cURL extension
+- Shaarli >= v0.8.1
 
 ## Installation
 ### 1. Create the application in Mastodon

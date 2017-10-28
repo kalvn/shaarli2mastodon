@@ -1,18 +1,8 @@
 <?php
-
 /**
- * TootoPHP
+ * Adapted from TootoPHP.
  * 
- * @author Maxence Cauderlier
- * @link http://max-koder.fr
  * @link https://framagit.org/MaxKoder/TootoPHP
- * @package TootoPHP
- * @version 1.0.0
- * @license http://opensource.org/licenses/MIT The MIT License  
- */
-
-/**
- * TootoPHP is a class to dialog with Mastodon API
  */
 require_once 'HttpRequest.php';
 
@@ -27,7 +17,7 @@ class Mastodon
     
     /**
      * HttpRequest Instance
-     * @var \TootoPHP\HttpRequest
+     * @var \HttpRequest
      */
     protected $http;
 
