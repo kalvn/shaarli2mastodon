@@ -1,0 +1,17 @@
+{
+    "name": "kalvn/shaarli2mastodon",
+    "description": "Automatically toot your links from Shaarli to Mastodon.",
+    "type": "project",
+    "license": "MIT",
+    "homepage": "https://github.com/kalvn/shaarli2mastodon",
+    "support": {
+        "issues": "https://github.com/kalvn/shaarli2mastodon/issues"
+    },
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
+    },
+    "autoload": {}
+}
