@@ -14,7 +14,9 @@
  * @author kalvn <kalvnthereal@gmail.com>
  */
 
-require 'tootophp/autoload.php';
+//require 'tootophp/autoload.php';
+//require_once 'mastodonapi/Mastodon_api.php';
+require_once 'Mastodon/Mastodon.php';
 
 /**
  * Maximum length for a toot.
@@ -145,24 +147,15 @@ function hook_shaarli2mastodon_render_editlink($data, $conf)
  */
 function toot($conf, $toot){
     $mastodonInstance = $conf->get('plugins.MASTODON_INSTANCE', false);
-    $appName = $conf->get('plugins.MASTODON_APPNAME', false);
-    $appUrl = $conf->get('plugins.MASTODON_APPURL', false);
-    $appToken = $conf->get('plugins.MASTODON_APPTOKEN', false);
     $appId = $conf->get('plugins.MASTODON_APPID', false);
     $appSecret = $conf->get('plugins.MASTODON_APPSECRET', false);
+    $appToken = $conf->get('plugins.MASTODON_APPTOKEN', false);
 
-    $tootoPHP = new TootoPHP\TootoPHP($mastodonInstance);
+    $mastodonApi = new Mastodon($mastodonInstance, array(
+        'bearer' => $appToken
+    ));
 
-    $app = $tootoPHP->registerApp($appName, $appUrl);
-
-    if ( $app === false) {
-        throw new Exception('Problem during register app');
-    }
-
-    $token = $app->registerAccessToken($appToken);
-    $bearerToken = $app->authentify($appId, $appSecret);
-
-    return $app->postStatus($toot);
+    return $mastodonApi->postStatus($toot);
 }
 
 /**
@@ -276,11 +269,9 @@ function getTootLength($toot){
 function isConfigValid($conf){
     $mandatory = array(
         'MASTODON_INSTANCE',
-        'MASTODON_APPNAME',
-        'MASTODON_APPURL',
-        'MASTODON_APPTOKEN',
         'MASTODON_APPID',
         'MASTODON_APPSECRET',
+        'MASTODON_APPTOKEN',
     );
     foreach ($mandatory as $value) {
         $setting = $conf->get('plugins.'. $value);

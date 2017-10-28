@@ -11,13 +11,12 @@
  * @license http://opensource.org/licenses/MIT The MIT License  
  */
 
-namespace TootoPHP;
-
 /**
  * TootoPHP is a class to dialog with Mastodon API
  */
+require_once 'HttpRequest.php';
 
-class TootoPHP
+class Mastodon
 {
 
     /**
@@ -26,12 +25,6 @@ class TootoPHP
      */
     protected $domain;
     
-    /**
-     * Path to the JSON file
-     * @var string
-     */
-    protected $jsonFile;
-
     /**
      * HttpRequest Instance
      * @var \TootoPHP\HttpRequest
@@ -74,93 +67,16 @@ class TootoPHP
      * Setting Domain, like 'mastodon.social'
      * @param string $domain
      */
-    public function __construct($domain = 'mastodon.social')
+    public function __construct($domain = 'mastodon.social', array $parameters)
     {
-        $this->domain   = $domain;
-        // Store credentials in JSON file, in 'tootophp' dir
-        $this->jsonFile = __DIR__ . DIRECTORY_SEPARATOR . 'tootophp.json';
-    }
-
-    /**
-     * Register Application
-     * 
-     * $applicationName is name of your app, like 'TootoPHP'
-     * $websiteURL is website URL, like 'http://max-koder.fr
-     * 
-     * @param string $applicationName
-     * @param string $websiteURL
-     * @return boolean|$this
-     */
-    public function registerApp($applicationName, $websiteURL = '')
-    {
-        $this->credentials['client_name'] = $applicationName;
-        $this->credentials['website']     = $websiteURL;
+        $this->domain = $domain;
 
         $this->http = new HttpRequest($this->domain);
 
-        if (!is_file($this->jsonFile)) {
-            // Create new App
-            $writeApp = $this->createApp();
-            if ($writeApp === false) {
-                return false;
-            }
-        }
-        // Get AppCredentials by JSON
-        $this->appCredentials = $this->loadCredentialsByJSON();
-        if (isset($this->appCredentials['bearer'])) {
-            $this->headers['Authorization'] = 'Bearer ' . $this->appCredentials['bearer'];
-        }
-        return $this;
-    }
-
-    /**
-     * Get Authorization URL
-     * 
-     * After Register App, Authorization URL provide a page to accept App use Mastodon
-     * And return an auth code for method getAccessToken
-     * @return boolean|string
-     */
-    public function getAuthUrl()
-    {
-        if (is_array($this->appCredentials) && isset($this->appCredentials['client_id'])) {
-            // Get Authorization URL
-            return $this->http->domainURL . 'oauth/authorize/?' . http_build_query([
-                'client_id'     => $this->appCredentials['client_id'],
-                'redirect_uri'  => 'urn:ietf:wg:oauth:2.0:oob',
-                'response_type' => 'code',
-                'scope'         => 'read write follow',
-            ]);
-        }
-        return false;
-    }
-
-    /**
-     * Get Access Token
-     * 
-     * Access Token is granted to authentify user, and gave by getAuthUrl method
-     * by accepting app is using Mastodon
-     * 
-     * @param string $authCode
-     * @return boolean|string
-     */
-    public function registerAccessToken($authCode)
-    {
-        if (is_array($this->appCredentials) && isset($this->appCredentials['client_id'])) {
-            // Exchange Access Token for our Auth Token
-            $token = $this->http->post(
-                'oauth/token', $this->headers, 
-                [
-                    'grant_type'    => 'authorization_code',
-                    'redirect_uri'  => 'urn:ietf:wg:oauth:2.0:oob',
-                    'client_id'     => $this->appCredentials['client_id'],
-                    'client_secret' => $this->appCredentials['client_secret'],
-                    'code'          => $authCode
-                ]
-            );
-            // Save our Token
-            return $this->catchBearerToken($token);
-        }
-        return false;
+        $this->credentials['client_name'] = $parameters['client_name'];
+        $this->credentials['website'] = $parameters['website'];
+        $this->appCredentials['bearer'] = $parameters['bearer'];
+        $this->headers['Authorization'] = $parameters['bearer'];
     }
 
     /**
@@ -280,6 +196,7 @@ class TootoPHP
      */
     public function postStatus($content, $visibility = 'public', $medias = [])
     {
+        //var_dump($this->headers);die;
         return $this->http->post(
             $this->http->apiURL . 'statuses',
             $this->headers,
@@ -473,31 +390,4 @@ class TootoPHP
         }
         return $this->saveCredentialsToJSON($credentials);
     }
-
-    /**
-     * Save credentials in the JSON file
-     * 
-     * Return true if success
-     * 
-     * @param array $credentials
-     * @return boolean
-     */
-    protected function saveCredentialsToJSON($credentials)
-    {
-        return file_put_contents($this->jsonFile, json_encode($credentials, JSON_PRETTY_PRINT));
-    }
-    
-    /**
-     * Load credentials by JSON
-     * 
-     * Credentials are saved in JSON to save many requests
-     * 
-     * @return array
-     */
-    protected function loadCredentialsByJSON()
-    {
-        $content = file_get_contents($this->jsonFile);
-        return json_decode($content, true);
-    }
-
 }

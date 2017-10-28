@@ -11,8 +11,6 @@
  * @license http://opensource.org/licenses/MIT The MIT License  
  */
 
-namespace TootoPHP;
-
 /**
  * HttpRequest is a way to do http requests and get responses
  */

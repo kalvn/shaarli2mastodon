@@ -26,11 +26,9 @@ $ git clone https://github.com/kalvn/shaarli2mastodon
 Then, on your Shaarli instance, go to *Plugin administration* page and activate the plugin.
 
 ### 3. Configure the plugin
-Your parameters from step 1 will be used here. After plugin activation, you'll see 7 parameters (that's a lot but only 6 are mandatory 😄).
+Your parameters from step 1 will be used here. After plugin activation, you'll see 5 parameters.
 
 - **MASTODON_INSTANCE**: Your Mastodon instance, example: *mastodon.xyz*
-- **MASTODON_APPNAME**: Mastodon application name, example: *shaarli2mastodon*
-- **MASTODON_APPURL**: Mastodon application URL, example: *https://github.com/kalvn/shaarli2mastodon*
 - **MASTODON_APPID**: Mastodon application ID
 - **MASTODON_APPSECRET**: Mastodon application secret
 - **MASTODON_APPTOKEN**: Mastodon application token
