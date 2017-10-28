@@ -155,6 +155,8 @@ function toot($conf, $toot){
         'bearer' => $appToken
     ));
 
+    $mastodonApi->authentify($appId, $appSecret);
+
     return $mastodonApi->postStatus($toot);
 }
 
