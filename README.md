@@ -14,7 +14,7 @@ It is largely inspired by [ArthurHoaro's shaarli2twitter](https://github.com/Art
 ### 1. Create the application in Mastodon
 On your Mastodon instance, go to *Preferences > Development > Your applications* and create a new one.
 
-You can use whatever you want as *name* and *website* but if you have no idea, I suggest *shaarli2mastodon* and *https://github.com/kalvn/shaarli2mastodon*. You need to remember those parameters for next step.
+You can use whatever you want as *name* and *website* but if you have no idea, I suggest *shaarli2mastodon* and *https://github.com/kalvn/shaarli2mastodon*.
 
 In *Scopes*, chose only *write* permission and validate.
 
@@ -28,6 +28,8 @@ Run the following command from within the `/plugins` directory:
 ```bash
 $ git clone https://github.com/kalvn/shaarli2mastodon
 ```
+
+Make sure these new files are readable by your web server (Apache, Nginx, etc.).
 
 Then, on your Shaarli instance, go to *Plugin administration* page and activate the plugin.
 
