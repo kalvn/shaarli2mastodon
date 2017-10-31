@@ -101,6 +101,11 @@ function hook_shaarli2mastodon_save_link($data, $conf)
 
     $data['permalink'] = index_url($_SERVER) . '?' . $data['shorturl'];
 
+    // If the link is a note, we use the permalink as the url.
+    if(isLinkNote($data)){
+        $data['url'] = $data['permalink'];
+    }
+
     $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', DEFAULT_FORMAT);
     $toot = formatToot($data, $format);
     $response = toot($conf, $toot);
@@ -282,4 +287,13 @@ function isConfigValid($conf){
         }
     }
     return true;
+}
+
+/**
+ * Determines if the link is a note.
+ * @param  array  $link The link to check.
+ * @return boolean      Whether the link is a note or not.
+ */
+function isLinkNote($link){
+    return $link['shorturl'] === substr($link['url'], 1);
 }
