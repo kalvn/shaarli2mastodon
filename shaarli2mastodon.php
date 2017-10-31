@@ -184,6 +184,8 @@ function formatToot($link, $format){
         $toot = replacePlaceholder($toot, $priority, $link[$priority]);
     }
 
+    $toot = str_replace('\n', "\n", $toot);
+
     return $toot;
 }
 
