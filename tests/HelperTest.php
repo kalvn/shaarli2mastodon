@@ -52,6 +52,20 @@ class UtilityFunctionsTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals($expected, $tootFormatted);
     }
 
+    public function testNonAlphanumericalTags(){
+        $tagModified = tagify('firefox');
+        $expected = '#firefox';
+        $this->assertEquals($expected, $tagModified);
+
+        $tagModified = tagify('this-is-a-forbidden-tag');
+        $expected = '#thisisaforbiddentag';
+        $this->assertEquals($expected, $tagModified);
+
+        $tagModified = tagify('This is $EV3N_worse!');
+        $expected = '#ThisisEV3Nworse';
+        $this->assertEquals($expected, $tagModified);
+    }
+
 
     // Helpers.
 

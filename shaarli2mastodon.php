@@ -96,7 +96,8 @@ function hook_shaarli2mastodon_save_link($data, $conf)
     // We will use an array to generate hashtags, then restore original shaare tags.
     $data['tags'] = array_values(array_filter(explode(' ', $data['tags'])));
     for ($i = 0, $c = count($data['tags']); $i < $c; $i++) {
-        $data['tags'][$i] = '#'. $data['tags'][$i];
+        // Keep tags strictly alphanumerical because Mastodon only allows that.
+        $data['tags'][$i] = tagify($data['tags'][$i]);
     }
 
     $data['permalink'] = index_url($_SERVER) . '?' . $data['shorturl'];
@@ -298,4 +299,13 @@ function isConfigValid($conf){
  */
 function isLinkNote($link){
     return $link['shorturl'] === substr($link['url'], 1);
+}
+
+/**
+ * Modifies a tag to make them real Mastodon tags.
+ * @param  string $tag The tag to change.
+ * @return string      The tag modified to be valid.
+ */
+function tagify($tag){
+    return '#' . preg_replace('/[^0-9a-zA-Z]/m', '', $tag);
 }
