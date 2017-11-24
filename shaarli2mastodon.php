@@ -26,15 +26,15 @@ const TOOT_LENGTH = 500;
  * In Mastodon, URL count for 23 characters.
  * https://github.com/tootsuite/mastodon/pull/4427/commits
  */
-const URL_LENGTH = 23;
+const TOOT_URL_LENGTH = 23;
 /**
  * The default toot format if none is specified.
  */
-const DEFAULT_FORMAT = '#Shaarli: ${title} ${url} ${tags}';
+const TOOT_DEFAULT_FORMAT = '#Shaarli: ${title} ${url} ${tags}';
 /**
  * Authorized placeholders.
  */
-const ALLOWED_PLACEHOLDERS = array('url', 'permalink', 'title', 'tags', 'description');
+const TOOT_ALLOWED_PLACEHOLDERS = array('url', 'permalink', 'title', 'tags', 'description');
 
 /**
  * Init function: check settings, and set default format.
@@ -47,7 +47,7 @@ function shaarli2mastodon_init($conf)
 {
     $format = $conf->get('plugins.MASTODON_TOOT_FORMAT');
     if (empty($format)) {
-        $conf->set('plugins.MASTODON_TOOT_FORMAT', DEFAULT_FORMAT);
+        $conf->set('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
     }
 
     if (!isConfigValid($conf)) {
@@ -107,7 +107,7 @@ function hook_shaarli2mastodon_save_link($data, $conf)
         $data['url'] = $data['permalink'];
     }
 
-    $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', DEFAULT_FORMAT);
+    $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
     $toot = formatToot($data, $format);
     $response = toot($conf, $toot);
 
@@ -174,7 +174,7 @@ function toot($conf, $toot){
  * @return string           The input string formatted with the given template.
  */
 function formatToot($link, $format){
-    $priorities = ALLOWED_PLACEHOLDERS;
+    $priorities = TOOT_ALLOWED_PLACEHOLDERS;
 
     $toot = $format;
     foreach ($priorities as $priority) {
@@ -205,7 +205,7 @@ function replacePlaceholder($toot, $placeholder, $value){
     }
 
     $currentLength = getTootLength($toot);
-    $valueLength = $placeholder === 'permalink' || $placeholder === 'url' ? URL_LENGTH : strlen($value);
+    $valueLength = $placeholder === 'permalink' || $placeholder === 'url' ? TOOT_URL_LENGTH : strlen($value);
 
     if($currentLength + $valueLength > TOOT_LENGTH){
         $value = mb_strcut($value, 0, TOOT_LENGTH - $currentLength - 4) . '…';
@@ -246,7 +246,7 @@ function replacePlaceholderArray($toot, $placeholder, $value){
  * @return string       The input string with placeholder removed.
  */
 function removeRemainingPlaceholders($toot){
-    return preg_replace('#\${(' . implode('|', ALLOWED_PLACEHOLDERS) . ')}#', '', $toot);
+    return preg_replace('#\${(' . implode('|', TOOT_ALLOWED_PLACEHOLDERS) . ')}#', '', $toot);
 }
 
 /**
@@ -259,7 +259,7 @@ function removeRemainingPlaceholders($toot){
  */
 function getTootLength($toot){
     $urlMockup = '';
-    for($i = 0; $i < URL_LENGTH ; $i++){
+    for($i = 0; $i < TOOT_URL_LENGTH ; $i++){
         $urlMockup .= 'a';
     }
 
