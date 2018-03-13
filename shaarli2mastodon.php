@@ -307,5 +307,9 @@ function isLinkNote($link){
  * @return string      The tag modified to be valid.
  */
 function tagify($tag){
-    return '#' . preg_replace('/[^0-9a-zA-Z]/m', '', $tag);
+    // Regex inspired by https://gist.github.com/janogarcia/3946583
+    // TODO validate real hashtag rules
+    // - only UTF-8 characters plus underscore
+    // - must not contain only numbers. At least one alpha character or underscore
+    return '#' . preg_replace('/[^0-9_\p{L}]/u', '', $tag);
 }
