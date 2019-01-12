@@ -8,7 +8,8 @@ It is largely inspired by [ArthurHoaro's shaarli2twitter](https://github.com/Art
 
 - PHP 5.3
 - PHP cURL extension
-- Shaarli >= v0.8.1
+- Shaarli >= v0.8.1 in public mode (which is the default mode)
+
 
 ## Installation
 ### 1. Create the application in Mastodon
