@@ -14,6 +14,10 @@
  * @author kalvn <kalvnthereal@gmail.com>
  */
 
+use Shaarli\Config\ConfigManager;
+use Shaarli\Plugin\PluginManager;
+use Shaarli\Router;
+
 //require 'tootophp/autoload.php';
 //require_once 'mastodonapi/Mastodon_api.php';
 require_once 'Mastodon/Mastodon.php';
