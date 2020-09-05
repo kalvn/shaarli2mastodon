@@ -16,7 +16,7 @@
 
 use Shaarli\Config\ConfigManager;
 use Shaarli\Plugin\PluginManager;
-use Shaarli\Router;
+use Shaarli\Render\TemplatePage;
 
 //require 'tootophp/autoload.php';
 //require_once 'mastodonapi/Mastodon_api.php';
@@ -39,6 +39,8 @@ const TOOT_DEFAULT_FORMAT = '#Shaarli: ${title} ${url} ${tags}';
  * Authorized placeholders.
  */
 const TOOT_ALLOWED_PLACEHOLDERS = array('url', 'permalink', 'title', 'tags', 'description');
+
+const DIRECTORY_PATH = __DIR__;
 
 /**
  * Init function: check settings, and set default format.
@@ -69,8 +71,8 @@ function shaarli2mastodon_init($conf)
  */
 function hook_shaarli2mastodon_render_footer($data, $conf)
 {
-    if ($data['_PAGE_'] == Router::$PAGE_EDITLINK) {
-        $data['js_files'][] = PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.js';
+    if ($data['_PAGE_'] == TemplatePage::EDIT_LINK) {
+        $data['js_files'][] = ($data['_BASE_PATH_'] ?? '') . '/' . PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.js';
     }
     return $data;
 }
@@ -139,7 +141,7 @@ function hook_shaarli2mastodon_render_editlink($data, $conf)
 
     $private = $conf->get('privacy.default_private_links', false);
 
-    $html = file_get_contents(PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/edit_link.html');
+    $html = file_get_contents(DIRECTORY_PATH . '/edit_link.html');
     $html = sprintf($html, $private ? '' : 'checked="checked"');
 
     $data['edit_link_plugin'][] = $html;
@@ -149,10 +151,10 @@ function hook_shaarli2mastodon_render_editlink($data, $conf)
 
 /**
  * Posts the toot to Mastodon.
- * 
+ *
  * @param  ConfigManager    $conf Configuration instance.
  * @param  string           $toot The toot to post. It must respect Mastodon restrictions.
- * 
+ *
  * @return void
  */
 function toot($conf, $toot){
@@ -172,7 +174,7 @@ function toot($conf, $toot){
 
 /**
  * Format a string according the the given template.
- * 
+ *
  * @param  array    $link   The link to format, in an array format.
  * @param  string   $format The template.
  * @return string           The input string formatted with the given template.
@@ -196,11 +198,11 @@ function formatToot($link, $format){
 
 /**
  * Replaces a single placeholder with its value.
- * 
+ *
  * @param  string $toot        The toot.
  * @param  string $placeholder The placeholder id.
  * @param  string $value       The value to replace the placeholder with.
- * 
+ *
  * @return string              The input string with placeholder replaced with value.
  */
 function replacePlaceholder($toot, $placeholder, $value){
@@ -220,11 +222,11 @@ function replacePlaceholder($toot, $placeholder, $value){
 
 /**
  * Replaces a single placeholder with its array value.
- * 
+ *
  * @param  string $toot        The toot.
  * @param  string $placeholder The placeholder id.
  * @param  array  $value       The value to replace the placeholder with, each item separated with a space.
- * 
+ *
  * @return string              The input string with placeholder replaced with value.
  */
 function replacePlaceholderArray($toot, $placeholder, $value){
@@ -244,9 +246,9 @@ function replacePlaceholderArray($toot, $placeholder, $value){
 
 /**
  * Remove remaining placeholders from a string.
- * 
+ *
  * @param  string $toot The string.
- * 
+ *
  * @return string       The input string with placeholder removed.
  */
 function removeRemainingPlaceholders($toot){
@@ -256,9 +258,9 @@ function removeRemainingPlaceholders($toot){
 /**
  * Calculates the length of a toot respecting Mastodon rules.
  * For example, URL count as 23 characters.
- * 
+ *
  * @param  string $toot The toot.
- * 
+ *
  * @return int          The length of the toot.
  */
 function getTootLength($toot){
@@ -275,9 +277,9 @@ function getTootLength($toot){
 
 /**
  * Determines whether the configuration is valid or not.
- * 
+ *
  * @param  ConfigManager    $conf   Configuration instance.
- * 
+ *
  * @return boolean                  Whether the config is valid or not.
  */
 function isConfigValid($conf){
