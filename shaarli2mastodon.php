@@ -72,7 +72,7 @@ function shaarli2mastodon_init($conf)
 function hook_shaarli2mastodon_render_footer($data, $conf)
 {
     if ($data['_PAGE_'] == TemplatePage::EDIT_LINK) {
-        $data['js_files'][] = ($data['_BASE_PATH_'] ?? '') . '/' . PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.js';
+        $data['js_files'][] = PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.js';
     }
     return $data;
 }
