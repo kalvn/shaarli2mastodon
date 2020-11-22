@@ -39,6 +39,11 @@ const TOOT_DEFAULT_FORMAT = '#Shaarli: ${title} ${url} ${tags}';
  * Authorized placeholders.
  */
 const TOOT_ALLOWED_PLACEHOLDERS = array('url', 'permalink', 'title', 'tags', 'description');
+/**
+ * Hide url when sharing a note
+ * Values can be 'yes' or 'no'.
+ */
+const TOOT_HIDE_URL = 'no';
 
 const DIRECTORY_PATH = __DIR__;
 
@@ -54,6 +59,11 @@ function shaarli2mastodon_init($conf)
     $format = $conf->get('plugins.MASTODON_TOOT_FORMAT');
     if (empty($format)) {
         $conf->set('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
+    }
+
+    $hide = $conf->get('plugins.MASTODON_HIDE_URL');
+    if (empty($hide)) {
+        $conf->set('plugins.MASTODON_HIDE_URL', TOOT_HIDE_URL);
     }
 
     if (!isConfigValid($conf)) {
@@ -109,8 +119,16 @@ function hook_shaarli2mastodon_save_link($data, $conf)
     $data['permalink'] = index_url($_SERVER) . '?' . $data['shorturl'];
 
     // If the link is a note, we use the permalink as the url.
-    if(isLinkNote($data)){
+    if (isLinkNote($data)) {
         $data['url'] = $data['permalink'];
+        // Hide URL when sharing a note (microblog mode)
+        $hide = $conf->get('plugins.MASTODON_HIDE_URL', TOOT_HIDE_URL);
+        if ($hide == 'yes') {
+            $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
+            $data['url'] = '';
+            $toot = formatToot($data, $format);
+            $data['url'] = (getTootLength($toot) >= TOOT_LENGTH) ? $data['permalink'] : '';
+        }
     }
 
     $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
