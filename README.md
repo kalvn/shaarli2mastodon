@@ -19,7 +19,7 @@ You can use whatever you want as *name* and *website* but if you have no idea, I
 
 In *Scopes*, chose only *write* permission and validate.
 
-Your new application should appear in the list. Click on it and keep the first 3 settings visible, you'll need them for next step.
+Your new application should appear in the list. Click on it and copy the app token (the third entry) to your clipboard (CTRL+C).
 
 ### 2. Install the plugin
 You must download and copy the files under `/plugins/shaarli2mastodon` directory of your Shaarli installation. There are several ways to do so. Here, I'll be using Git.
@@ -38,22 +38,21 @@ Then, on your Shaarli instance, go to *Plugin administration* page and activate 
 Your parameters from step 1 will be used here. After plugin activation, you'll see 5 parameters.
 
 - **MASTODON_INSTANCE**: Your Mastodon instance, example: *mastodon.xyz*
-- **MASTODON_APPID**: Mastodon application ID
-- **MASTODON_APPSECRET**: Mastodon application secret
-- **MASTODON_APPTOKEN**: Mastodon application token
+- **MASTODON_APPTOKEN**: Mastodon application token, example: *rODeyYKXVXDq91ecGwTG6BI0yU5mLTSiPjFMv6uJ50I*
+- **MASTODON_TOOT_MAX_LENGTH**: Defines the toots max length. By default it is 500 since it's the max length on most Mastodon instances.
 - **MASTODON_TOOT_FORMAT**: The format of your toots. Available placeholders:
     + *${url}*: URL of link shared
     + *${permalink}*: permalink of the share
     + *${title}*: title of the share
     + *${description}*: description of the share
     + *${tags}*: tags of the share, prefixed with # to be valid Mastodon tags
-
+    + *${cw}*: content warning. Everything which is before this placeholder will appear before the content warning (visible). Everything which is after this placeholder will appear after the content warning (hidden - you must unfold to see it).
 
 
 ## Tests
-After you installed PHPUnit, you can run unit tests with:
 
 ```bash
-$ phpunit tests
+composer install
+./vendor/bin/phpunit tests
 ```
 
