@@ -46,6 +46,14 @@ function shaarli2mastodon_init ($conf) {
     }
 }
 
+function hook_shaarli2mastodon_render_includes ($data) {
+    if (in_array($data['_PAGE_'], [TemplatePage::EDIT_LINK, TemplatePage::EDIT_LINK_BATCH])) {
+        $data['css_files'][] = PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.css';
+    }
+
+    return $data;
+}
+
 /**
  * Add the JS file: disable the toot button if the link is set to private.
  *
@@ -55,7 +63,7 @@ function shaarli2mastodon_init ($conf) {
  * @return array $data with the JS file.
  */
 function hook_shaarli2mastodon_render_footer ($data, $conf) {
-    if ($data['_PAGE_'] == TemplatePage::EDIT_LINK) {
+    if (in_array($data['_PAGE_'], [TemplatePage::EDIT_LINK, TemplatePage::EDIT_LINK_BATCH])) {
         $data['js_files'][] = PluginManager::$PLUGINS_PATH . '/shaarli2mastodon/shaarli2mastodon.js';
     }
 
@@ -73,7 +81,6 @@ function hook_shaarli2mastodon_render_footer ($data, $conf) {
 function hook_shaarli2mastodon_save_link ($data, $conf) {
     // No toot without config, for private links, or on edit.
     if (!isConfigValid($conf)
-        || (isset($data['updated']) && $data['updated'] != false)
         || $data['private']
         || !isset($_POST['toot'])
     ) {
@@ -92,7 +99,7 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
         $data['url'] = $data['permalink'];
     }
 
-    $format = $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
+    $format = isset($_POST['toot-format']) ? $_POST['toot-format'] : $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
     $toot = new Toot($data, $format, $tagsSeparator, $maxLength);
     $mastodonInstance = $conf->get('plugins.MASTODON_INSTANCE', false);
     $appToken = $conf->get('plugins.MASTODON_APPTOKEN', false);
@@ -117,14 +124,33 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
  * @return array $data with `edit_link_plugin` placeholder filled.
  */
 function hook_shaarli2mastodon_render_editlink ($data, $conf) {
-    if (!$data['link_is_new'] || !isConfigValid($conf)) {
+    if (!isConfigValid($conf)) {
         return $data;
     }
 
     $private = $conf->get('privacy.default_private_links', false);
+    $checked = $data['link_is_new'] && !$private;
 
     $html = file_get_contents(DIRECTORY_PATH . '/edit_link.html');
-    $html = sprintf($html, $private ? '' : 'checked="checked"');
+    // $html = sprintf(
+    //   $html,
+    //   $checked ? 'checked="checked"' : '',
+    //   $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT)
+    // );
+
+    $html = str_replace([
+      '##checked##',
+      '##toot-format##',
+      '##id##',
+      '##max-length##',
+      '##tags-separator##',
+    ], [
+      $checked ? 'checked="checked"' : '',
+      $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT),
+      uniqid(),
+      $conf->get('plugins.MASTODON_TOOT_MAX_LENGTH'),
+      $conf->get('general.tags_separator', ' '),
+    ], $html);
 
     $data['edit_link_plugin'][] = $html;
 

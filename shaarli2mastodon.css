@@ -1,0 +1,45 @@
+.toot-configure {
+  padding: 15px;
+  background: #f2f2f2;
+  border: 1px solid #ddd;
+}
+.page-form .toot-configure {
+  width: 90%;
+  margin: auto;
+}
+
+.toot-hidden {
+  display: none;
+}
+
+.toot-button {
+  background: none;
+  border: none;
+  color: #4ea2df;
+}
+.toot-button:hover,
+.toot-button:focus {
+  text-decoration: underline;
+}
+
+.toot-preview-wrapper {
+  margin: 10px 0;
+}
+.toot-preview {
+  max-width: 580px;
+  margin: 5px 0;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #282C37;
+  color: #fff;
+  text-align: left;
+}
+.toot-preview a {
+  color: #4ea2df;
+}
+.toot-url {
+  color: #4ea2df;
+}
+.toot-tag {
+  color: #d9e1e8;
+}

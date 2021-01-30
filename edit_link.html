@@ -1,4 +1,20 @@
-<div class="toot" id="toot-checkbox">
-  <input type="checkbox" %s name="toot" id="toot" class="filled-in">
-  <label for="toot">Publish on Mastodon</label>
+<div class="toot">
+  <input type="checkbox" ##checked## name="toot" id="toot-enable-##id##" class="filled-in">
+  <label for="toot-enable-##id##">Publish on Mastodon</label> - <button type="button" class="toot-button">more</button>
+
+  <div class="toot-configure toot-hidden">
+    <div class="toot-modify-format">
+      <label for="toot-format-##id##">Modify the format of your toot</label>
+      <input type="text" value="##toot-format##" name="toot-format" id="toot-format-##id##">
+    </div>
+    <div class="toot-preview-wrapper">
+      <div>Preview</div>
+      <div class="toot-preview">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toot-parameters toot-hidden">
+  <span class="toot-parameter-max-length">##max-length##</span>
+  <span class="toot-parameter-tags-separator">##tags-separator##</span>
 </div>
