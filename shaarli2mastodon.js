@@ -8,6 +8,7 @@ linkForms.forEach(function (linkForm) {
   var tootInput = linkForm.querySelector('[name="toot"]');
   var tootButton = linkForm.querySelector('.toot-button');
   var tootConfigure = linkForm.querySelector('.toot-configure');
+  var tootPreview = linkForm.querySelector('.toot-preview');
   var reactiveFields = linkForm.querySelectorAll('input, textarea');
 
   // Disables mastodon publication if private flag is selected.
@@ -23,6 +24,20 @@ linkForms.forEach(function (linkForm) {
   tootButton.addEventListener('click', function (event) {
     renderPreview(linkForm);
     tootConfigure.classList.toggle('toot-hidden');
+  });
+
+  tootPreview.addEventListener('click', function (event) {
+    // Click on the "show more" button when using cw placeholder.
+    if (event.target.className.indexOf('toot-preview-cw-button') >= 0) {
+      var previewCw = linkForm.querySelector('.toot-preview-cw');
+      tootPreview.classList.toggle('toot-preview-has-cw-hidden');
+
+      if (tootPreview.className.indexOf('toot-preview-has-cw-hidden') >= 0) {
+        event.target.innerText = 'show more';
+      } else {
+        event.target.innerText = 'show less';
+      }
+    }
   });
 
   // Updates preview when something changes.
@@ -61,6 +76,14 @@ function renderPreview (linkForm) {
   var format = linkForm.querySelector('[name="toot-format"]').value;
   var maxLength = linkForm.querySelector('.toot-parameter-max-length').innerText || 500;
   var tagsSeparator = linkForm.querySelector('.toot-parameter-tags-separator').innerText;
+  var isNote = linkForm.querySelector('.toot-parameter-is-note').innerText === 'true';
+
+  if (isNote) {
+    link.url = link.permalink;
+  }
+
+  var hasCw = format.indexOf('${cw}') >= 0;
+  var isCwHidden = linkForm.querySelector('.toot-preview').className.indexOf('toot-preview-has-cw-hidden') >= 0;
 
   link['tags'] = tagify(link['tags'], tagsSeparator);
   link['description'] = link['description'].replace(/\n/g, '\\n');
@@ -69,7 +92,15 @@ function renderPreview (linkForm) {
   for (i in placeholders) {
     var placeholder = placeholders[i];
 
+    if (hasCw && placeholder === 'cw') {
+      output = output.replace(new RegExp('\\$\\{' + placeholder + '\\}', 'g'), '<button type="button" class="toot-preview-cw-button">' + (isCwHidden ? 'show more' : 'show less') + '</button><div class="toot-preview-cw">');
+    }
+
     output = output.replace(new RegExp('\\$\\{' + placeholder + '\\}', 'g'), escapeHtml(link[placeholder]));
+  }
+
+  if (hasCw) {
+    output += '</div>';
   }
 
   // output = output.replace(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g, function (match, $1) {
@@ -90,7 +121,9 @@ function tagify (tags, tagsSeparator) {
   var output = [];
 
   for (i in parts) {
-    output.push('#' + parts[i].replace(/[^0-9_\p{L}]/gu, ''));
+    if (parts[i].length > 0) {
+      output.push('#' + parts[i].replace(/[^0-9_\p{L}]/gu, ''));
+    }
   }
 
   return output.join(' ');

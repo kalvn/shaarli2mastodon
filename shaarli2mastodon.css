@@ -22,6 +22,13 @@
   text-decoration: underline;
 }
 
+.toot-url {
+  color: #4ea2df;
+}
+.toot-tag {
+  color: #d9e1e8;
+}
+
 .toot-preview-wrapper {
   margin: 10px 0;
 }
@@ -37,9 +44,25 @@
 .toot-preview a {
   color: #4ea2df;
 }
-.toot-url {
-  color: #4ea2df;
+.toot-preview-cw-button {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 3px 5px;
+  background: #606984;
+  border-radius: 2px;
+  border: 0;
+  color: #282c37;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 0 6px;
+  text-transform: uppercase;
+  line-height: 20px;
+  cursor: pointer;
+  vertical-align: middle;
 }
-.toot-tag {
-  color: #d9e1e8;
+.toot-preview-cw {
+  margin-top: 15px;
+}
+.toot-preview-has-cw-hidden .toot-preview-cw{
+  display: none;
 }

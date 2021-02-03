@@ -5,11 +5,13 @@
   <div class="toot-configure toot-hidden">
     <div class="toot-modify-format">
       <label for="toot-format-##id##">Modify the format of your toot</label>
+      <div><small>Available placeholders: ${url}, ${permalink}, ${title}, ${tags}, ${description}, ${cw}</small></div>
       <input type="text" value="##toot-format##" name="toot-format" id="toot-format-##id##">
     </div>
     <div class="toot-preview-wrapper">
       <div>Preview</div>
-      <div class="toot-preview">
+      <div><small>This is a just a simple preview, the result might be slightly different. No max length truncation will be done in this preview.</small></div>
+      <div class="toot-preview toot-preview-has-cw-hidden">
       </div>
     </div>
   </div>
@@ -17,4 +19,5 @@
 <div class="toot-parameters toot-hidden">
   <span class="toot-parameter-max-length">##max-length##</span>
   <span class="toot-parameter-tags-separator">##tags-separator##</span>
+  <span class="toot-parameter-is-note">##is-note##</span>
 </div>

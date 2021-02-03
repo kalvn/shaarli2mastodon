@@ -144,12 +144,14 @@ function hook_shaarli2mastodon_render_editlink ($data, $conf) {
       '##id##',
       '##max-length##',
       '##tags-separator##',
+      '##is-note##',
     ], [
       $checked ? 'checked="checked"' : '',
       $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT),
       uniqid(),
       $conf->get('plugins.MASTODON_TOOT_MAX_LENGTH'),
       $conf->get('general.tags_separator', ' '),
+      isLinkNote($data) ? 'true' : 'false',
     ], $html);
 
     $data['edit_link_plugin'][] = $html;
@@ -184,5 +186,6 @@ function isConfigValid($conf){
  * @return boolean      Whether the link is a note or not.
  */
 function isLinkNote($link){
-    return $link['shorturl'] === substr($link['url'], 1);
+  return preg_match('/^http[s]?:/', $link['url']) === 0;
+    //return $link['shorturl'] === substr($link['url'], 1);
 }
