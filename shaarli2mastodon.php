@@ -20,6 +20,7 @@ use Shaarli\Render\TemplatePage;
 
 require_once 'src/Toot.php';
 require_once 'src/MastodonClient.php';
+require_once 'src/Utils.php';
 
 /**
  * The default toot format if none is specified.
@@ -41,7 +42,7 @@ function shaarli2mastodon_init ($conf) {
         $conf->set('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT);
     }
 
-    if (!isConfigValid($conf)) {
+    if (!Utils::isConfigValid($conf)) {
         return array('Please set up your Mastodon parameters in plugin administration page.');
     }
 }
@@ -80,7 +81,7 @@ function hook_shaarli2mastodon_render_footer ($data, $conf) {
  */
 function hook_shaarli2mastodon_save_link ($data, $conf) {
     // No toot without config, for private links, or on edit.
-    if (!isConfigValid($conf)
+    if (!Utils::isConfigValid($conf)
         || $data['private']
         || !isset($_POST['toot'])
     ) {
@@ -95,7 +96,7 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
     $data['permalink'] = index_url($_SERVER) . '?' . $data['shorturl'];
 
     // If the link is a note, we use the permalink as the url.
-    if(isLinkNote($data)){
+    if(Utils::isLinkNote($data)){
         $data['url'] = $data['permalink'];
     }
 
@@ -124,7 +125,7 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
  * @return array $data with `edit_link_plugin` placeholder filled.
  */
 function hook_shaarli2mastodon_render_editlink ($data, $conf) {
-    if (!isConfigValid($conf)) {
+    if (!Utils::isConfigValid($conf)) {
         return $data;
     }
 
@@ -132,11 +133,6 @@ function hook_shaarli2mastodon_render_editlink ($data, $conf) {
     $checked = $data['link_is_new'] && !$private;
 
     $html = file_get_contents(DIRECTORY_PATH . '/edit_link.html');
-    // $html = sprintf(
-    //   $html,
-    //   $checked ? 'checked="checked"' : '',
-    //   $conf->get('plugins.MASTODON_TOOT_FORMAT', TOOT_DEFAULT_FORMAT)
-    // );
 
     $html = str_replace([
       '##checked##',
@@ -151,41 +147,10 @@ function hook_shaarli2mastodon_render_editlink ($data, $conf) {
       uniqid(),
       $conf->get('plugins.MASTODON_TOOT_MAX_LENGTH'),
       $conf->get('general.tags_separator', ' '),
-      isLinkNote($data) ? 'true' : 'false',
+      Utils::isLinkNote($data['link']) ? 'true' : 'false',
     ], $html);
 
     $data['edit_link_plugin'][] = $html;
 
     return $data;
-}
-
-/**
- * Determines whether the configuration is valid or not.
- *
- * @param  ConfigManager    $conf   Configuration instance.
- *
- * @return boolean                  Whether the config is valid or not.
- */
-function isConfigValid($conf){
-    $mandatory = array(
-        'MASTODON_INSTANCE',
-        'MASTODON_APPTOKEN',
-    );
-    foreach ($mandatory as $value) {
-        $setting = $conf->get('plugins.'. $value);
-        if (empty($setting)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
- * Determines if the link is a note.
- * @param  array  $link The link to check.
- * @return boolean      Whether the link is a note or not.
- */
-function isLinkNote($link){
-  return preg_match('/^http[s]?:/', $link['url']) === 0;
-    //return $link['shorturl'] === substr($link['url'], 1);
 }

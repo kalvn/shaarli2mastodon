@@ -53,6 +53,8 @@ Your parameters from step 1 will be used here. After plugin activation, you'll s
 
 ```bash
 composer install
+composer test
+# or
 ./vendor/bin/phpunit tests
 ```
 
