@@ -72,7 +72,7 @@ class MastodonClient {
         'spoiler_text' => $toot->getMainText()
       ]);
     } else {
-      $body['status'] = $toot->getFullText();
+      $body['status'] = $toot->getText();
     }
 
     return $this->http->post(
