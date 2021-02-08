@@ -93,7 +93,7 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
     $tagsSeparator = $conf->get('general.tags_separator', ' ');
     $maxLength = intval($conf->get('plugins.MASTODON_TOOT_MAX_LENGTH'));
 
-    $data['permalink'] = index_url($_SERVER) . '?' . $data['shorturl'];
+    $data['permalink'] = index_url($_SERVER) . 'shaare/' . $data['shorturl'];
 
     // If the link is a note, we use the permalink as the url.
     if(Utils::isLinkNote($data)){
