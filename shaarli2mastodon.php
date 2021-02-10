@@ -111,6 +111,10 @@ function hook_shaarli2mastodon_save_link ($data, $conf) {
     // If an error has occurred, not blocking: just log it.
     if (isset($response['error'])) {
         error_log('Mastodon API error: '. $response['error']);
+
+        if (session_status() == PHP_SESSION_ACTIVE) {
+          $_SESSION['errors'][] = 'Something went wrong when publishing the link on Mastodon. ' . $response['error'];
+        }
     }
 
     return $link;
